@@ -14,10 +14,10 @@
 ###############################################################################
 
 # Tencent cos configuration
-readonly BUCKET="ydx-makefile-demo-1258087233"
-readonly REGION="ap-shanghai"
+readonly BUCKET="marmotedu-1254073058"
+readonly REGION="ap-beijing"
 readonly COS_RELEASE_DIR="iam-release"
-readonly COSTOOL="coscli"
+readonly COSTOOL="coscmd"
 
 # This is where the final release artifacts are created locally
 readonly RELEASE_STAGE="${LOCAL_OUTPUT_ROOT}/release-stage"
@@ -25,7 +25,7 @@ readonly RELEASE_TARS="${LOCAL_OUTPUT_ROOT}/release-tars"
 readonly RELEASE_IMAGES="${LOCAL_OUTPUT_ROOT}/release-images"
 
 # IAM github account info
-readonly IAM_GITHUB_ORG=yandongxiao
+readonly IAM_GITHUB_ORG=marmotedu
 readonly IAM_GITHUB_REPO=iam
 
 readonly ARTIFACT=iam.tar.gz
@@ -92,7 +92,7 @@ function iam::release::package_tarballs() {
   rm -rf "${RELEASE_STAGE}" "${RELEASE_TARS}" "${RELEASE_IMAGES}"
   mkdir -p "${RELEASE_TARS}"
   iam::release::package_src_tarball &
-  #iam::release::package_client_tarballs &
+  iam::release::package_client_tarballs &
   iam::release::package_iam_manifests_tarball &
   iam::release::package_server_tarballs &
   iam::util::wait-for-jobs || { iam::log::error "previous tarball phase failed"; return 1; }
@@ -385,6 +385,11 @@ function iam::release::package_iam_manifests_tarball() {
   local dst_dir="${release_stage}"
   mkdir -p "${dst_dir}"
   cp -r ${src_dir}/* "${dst_dir}"
+  #cp "${src_dir}/iam-apiserver.yaml" "${dst_dir}"
+  #cp "${src_dir}/iam-authz-server.yaml" "${dst_dir}"
+  #cp "${src_dir}/iam-pump.yaml" "${dst_dir}"
+  #cp "${src_dir}/iam-watcher.yaml" "${dst_dir}"
+  #cp "${IAM_ROOT}/cluster/gce/gci/health-monitor.sh" "${dst_dir}/health-monitor.sh"
 
   iam::release::clean_cruft
 

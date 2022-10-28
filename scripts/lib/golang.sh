@@ -23,7 +23,10 @@ readonly IAM_SUPPORTED_CLIENT_PLATFORMS=(
 # If you update this list, please also update build/BUILD.
 iam::golang::server_targets() {
   local targets=(
-    app
+    iam-apiserver
+    iam-authz-server
+    iam-pump
+    iam-watcher
   )
   echo "${targets[@]}"
 }
@@ -36,7 +39,10 @@ readonly IAM_SERVER_BINARIES=("${IAM_SERVER_TARGETS[@]##*/}")
 iam::golang::server_image_targets() {
   # NOTE: this contains cmd targets for iam::build::get_docker_wrapped_binaries
   local targets=(
-    cmd/app
+    cmd/iam-apiserver
+    cmd/iam-authz-server
+    cmd/iam-pump
+    cmd/iam-watcher
   )
   echo "${targets[@]}"
 }
@@ -121,6 +127,7 @@ iam::golang::setup_platforms
 # The set of client targets that we are building for all platforms
 # If you update this list, please also update build/BUILD.
 readonly IAM_CLIENT_TARGETS=(
+  iamctl
 )
 readonly IAM_CLIENT_BINARIES=("${IAM_CLIENT_TARGETS[@]##*/}")
 

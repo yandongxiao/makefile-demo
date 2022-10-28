@@ -8,9 +8,9 @@
 
 KUBECTL := kubectl
 NAMESPACE ?= iam
-CONTEXT ?= yandongxiao.dev
+CONTEXT ?= marmotedu.dev
 
-DEPLOYS=app
+DEPLOYS=iam-apiserver iam-authz-server iam-pump iam-watcher
 
 .PHONY: deploy.run.all
 deploy.run.all:

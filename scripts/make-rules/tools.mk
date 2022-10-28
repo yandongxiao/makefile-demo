@@ -81,7 +81,7 @@ install.cfssl:
 
 .PHONY: install.addlicense
 install.addlicense:
-	@$(GO) install github.com/yandongxiao/addlicense@latest
+	@$(GO) install github.com/marmotedu/addlicense@latest
 
 .PHONY: install.goimports
 install.goimports:
@@ -117,4 +117,4 @@ install.kube-score:
 
 .PHONY: install.go-gitlint
 install.go-gitlint:
-	@$(GO) install github.com/yandongxiao/go-gitlint/cmd/go-gitlint@latest
+	@$(GO) install github.com/marmotedu/go-gitlint/cmd/go-gitlint@latest

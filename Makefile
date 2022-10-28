@@ -12,7 +12,7 @@ all: tidy add-copyright format lint build
 # Build options
 
 ROOT_PACKAGE=github.com/yandongxiao/makefile-demo
-VERSION_PACKAGE=github.com/yandongxiao/component-base/pkg/version
+VERSION_PACKAGE=github.com/marmotedu/component-base/pkg/version
 
 # ==============================================================================
 # Includes
@@ -42,8 +42,8 @@ Options:
   IMAGES           Backend images to make. Default is all of cmd starting with iam-.
                    This option is available when using: make image/image.multiarch/push/push.multiarch
                    Example: make image.multiarch IMAGES="iam-apiserver iam-authz-server"
-  REGISTRY_PREFIX  Docker registry prefix. Default is yandongxiao.
-                   Example: make push REGISTRY_PREFIX=ccr.ccs.tencentyun.com/yandongxiao VERSION=v1.6.2
+  REGISTRY_PREFIX  Docker registry prefix. Default is marmotedu. 
+                   Example: make push REGISTRY_PREFIX=ccr.ccs.tencentyun.com/marmotedu VERSION=v1.6.2
   PLATFORMS        The multiple platforms to build. Default is linux_amd64 and linux_arm64.
                    This option is available when using: make build.multiarch/image.multiarch/push.multiarch
                    Example: make image.multiarch IMAGES="iam-apiserver iam-pump" PLATFORMS="linux_amd64 linux_arm64"
@@ -187,6 +187,6 @@ tidy:
 ## help: Show this help info.
 .PHONY: help
 help: Makefile
-	@echo -e "\nUsage: make <TARGETS> <OPTIONS> ...\n\nTargets:"
+	@printf "\nUsage: make <TARGETS> <OPTIONS> ...\n\nTargets:\n"
 	@sed -n 's/^##//p' $< | column -t -s ':' | sed -e 's/^/ /'
 	@echo "$$USAGE_OPTIONS"

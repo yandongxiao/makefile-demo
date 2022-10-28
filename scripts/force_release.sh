@@ -29,7 +29,7 @@ pushd ${IAM_ROOT}
 # try to delete target github release if exist to avoid create error
 iam::log::info "delete github release with tag ${version} if exist"
 github-release delete  \
-  --user yandongxiao\
+  --user marmotedu\
   --repo iam  \
   --tag ${version} &> /dev/null
 

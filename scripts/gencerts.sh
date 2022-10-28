@@ -13,7 +13,7 @@ readonly LOCAL_OUTPUT_ROOT="${IAM_ROOT}/${OUT_DIR:-_output}"
 readonly LOCAL_OUTPUT_CAPATH="${LOCAL_OUTPUT_ROOT}/cert"
 
 # Hostname for the cert
-readonly CERT_HOSTNAME="${CERT_HOSTNAME:-iam.api.yandongxiao.com,iam.authz.yandongxiao.com},127.0.0.1,localhost"
+readonly CERT_HOSTNAME="${CERT_HOSTNAME:-iam.api.marmotedu.com,iam.authz.marmotedu.com},127.0.0.1,localhost"
 
 # Run the cfssl command to generates certificate files for iam service, the
 # certificate files will save in $1 directory.
@@ -66,7 +66,7 @@ EOF
       "C": "CN",
       "ST": "BeiJing",
       "L": "BeiJing",
-      "O": "yandongxiao",
+      "O": "marmotedu",
       "OU": "iam"
     }
   ],
@@ -86,7 +86,7 @@ EOF
   fi
 
   echo "Generate "${prefix}" certificates..."
-  echo '{"CN":"'"${prefix}"'","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"CN","ST":"BeiJing","L":"BeiJing","O":"yandongxiao","OU":"'"${prefix}"'"}]}' \
+  echo '{"CN":"'"${prefix}"'","hosts":[],"key":{"algo":"rsa","size":2048},"names":[{"C":"CN","ST":"BeiJing","L":"BeiJing","O":"marmotedu","OU":"'"${prefix}"'"}]}' \
     | ${CFSSL_BIN} gencert -hostname="${CERT_HOSTNAME},${prefix}" -ca=ca.pem -ca-key=ca-key.pem \
     -config=ca-config.json -profile=iam - | ${CFSSLJSON_BIN} -bare "${prefix}"
 
