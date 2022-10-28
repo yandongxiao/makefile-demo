@@ -7,7 +7,7 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("helloworld")
+       do()
 }
 
 func do() {
