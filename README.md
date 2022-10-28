@@ -1,4 +1,4 @@
-本项目主要拷贝了 https://github.com/marmotedu/iam 项目中关于 Makefile 相关的内容。
+本项目主要拷贝了 https://github.com/yandongxiao/iam 项目中关于 Makefile 相关的内容。
 
 ```bash
 # 拷贝的额内容
