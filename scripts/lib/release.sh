@@ -14,10 +14,10 @@
 ###############################################################################
 
 # Tencent cos configuration
-readonly BUCKET="marmotedu-1254073058"
+readonly BUCKET="ydx-makefile-demo-1258087233"
 readonly REGION="ap-beijing"
-readonly COS_RELEASE_DIR="iam-release"
-readonly COSTOOL="coscmd"
+readonly COS_RELEASE_DIR="app-release"
+readonly COSTOOL="coscli"
 
 # This is where the final release artifacts are created locally
 readonly RELEASE_STAGE="${LOCAL_OUTPUT_ROOT}/release-stage"
@@ -92,7 +92,7 @@ function iam::release::package_tarballs() {
   rm -rf "${RELEASE_STAGE}" "${RELEASE_TARS}" "${RELEASE_IMAGES}"
   mkdir -p "${RELEASE_TARS}"
   iam::release::package_src_tarball &
-  iam::release::package_client_tarballs &
+  #iam::release::package_client_tarballs &
   iam::release::package_iam_manifests_tarball &
   iam::release::package_server_tarballs &
   iam::util::wait-for-jobs || { iam::log::error "previous tarball phase failed"; return 1; }
