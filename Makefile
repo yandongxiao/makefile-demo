@@ -11,7 +11,7 @@ all: tidy gen add-copyright format lint cover build
 # ==============================================================================
 # Build options
 
-ROOT_PACKAGE=github.com/marmotedu/iam
+ROOT_PACKAGE=github.com/yandongxiao/makefile-demo
 VERSION_PACKAGE=github.com/marmotedu/component-base/pkg/version
 
 # ==============================================================================
@@ -22,7 +22,7 @@ include scripts/make-rules/golang.mk
 include scripts/make-rules/image.mk
 include scripts/make-rules/deploy.mk
 include scripts/make-rules/copyright.mk
-include scripts/make-rules/gen.mk
+#include scripts/make-rules/gen.mk
 include scripts/make-rules/ca.mk
 include scripts/make-rules/release.mk
 include scripts/make-rules/swagger.mk
@@ -143,7 +143,8 @@ add-copyright:
 ## gen: Generate all necessary files, such as error code files.
 .PHONY: gen
 gen:
-	@$(MAKE) gen.run
+	# @$(MAKE) gen.run
+	echo 'ignore gen.run'
 
 ## ca: Generate CA files for all iam components.
 .PHONY: ca
