@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 # Use of this source code is governed by a MIT style
@@ -20,20 +20,15 @@ EOF
 # 安装
 function iam::mariadb::install()
 {
-  # 1. 配置 MariaDB 10.5 Yum 源
-  echo ${LINUX_PASSWORD} | sudo -S bash -c "cat << 'EOF' > /etc/yum.repos.d/mariadb-10.5.repo
-# MariaDB 10.5 CentOS repository list - created 2020-10-23 01:54 UTC
-# http://downloads.mariadb.org/mariadb/repositories/
-[mariadb]
-name = MariaDB
-baseurl = https://mirrors.aliyun.com/mariadb/yum/10.5/centos8-amd64/
-module_hotfixes=1
-gpgkey=https://yum.mariadb.org/RPM-GPG-KEY-MariaDB
-gpgcheck=0
-EOF"
+  # 1. 配置 MariaDB 10.5 apt 源
+  iam::common::sudo "apt-get install software-properties-common dirmngr apt-transport-https"
+  echo ${LINUX_PASSWORD} | sudo -S apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+  # add /etc/apt/sources.list
+  echo ${LINUX_PASSWORD} | sudo -S add-apt-repository 'deb [arch=amd64,arm64,ppc64el,s390x] https://mirrors.aliyun.com/mariadb/repo/10.5/ubuntu focal main'
 
   # 2. 安装 MariaDB 和 MariaDB 客户端
-  iam::common::sudo "yum -y install MariaDB-server MariaDB-client"
+  iam::common::sudo "apt update"
+  iam::common::sudo "apt -y install mariadb-server"
 
   # 3. 启动 MariaDB，并设置开机启动
   iam::common::sudo "systemctl enable mariadb"
@@ -53,9 +48,8 @@ function iam::mariadb::uninstall()
   set +o errexit
   iam::common::sudo "systemctl stop mariadb"
   iam::common::sudo "systemctl disable mariadb"
-  iam::common::sudo "yum -y remove MariaDB-server MariaDB-client"
+  iam::common::sudo "apt-get -y remove mariadb-server"
   iam::common::sudo "rm -rf /var/lib/mysql"
-  iam::common::sudo "rm -f /etc/yum.repos.d/mariadb-10.5.repo"
   set -o errexit
   iam::log::info "uninstall MariaDB successfully"
 }
@@ -73,6 +67,7 @@ function iam::mariadb::status()
     iam::log::error "can not login with root, mariadb maybe not initialized properly"
     return 1
   }
+  iam::log::info "MariaDB status active"
 }
 
 if [[ "$*" =~ iam::mariadb:: ]];then

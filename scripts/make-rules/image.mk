@@ -9,7 +9,7 @@
 DOCKER := docker
 DOCKER_SUPPORTED_API_VERSION ?= 1.32
 
-REGISTRY_PREFIX ?= yandongxiao
+REGISTRY_PREFIX ?= meaglekey
 BASE_IMAGE = centos:centos8
 
 EXTRA_ARGS ?= --no-cache

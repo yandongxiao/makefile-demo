@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
 # Use of this source code is governed by a MIT style
@@ -20,27 +20,27 @@ EOF
 function iam::redis::install()
 {
   # 1. 安装 Redis
-  iam::common::sudo "yum -y install redis"
+  iam::common::sudo "apt-get -y install redis-server"
 
   # 2. 配置 Redis
-  # 2.1 修改 `/etc/redis.conf` 文件，将 daemonize 由 no 改成 yes，表示允许 Redis 在后台启动
-  echo ${LINUX_PASSWORD} | sudo -S sed -i '/^daemonize/{s/no/yes/}' /etc/redis.conf
+  # 2.1 修改 `/etc/redis/redis.conf` 文件，将 daemonize 由 no 改成 yes，表示允许 Redis 在后台启动
+  echo ${LINUX_PASSWORD} | sudo -S sed -i '/^daemonize/{s/no/yes/}' /etc/redis/redis.conf
 
   # 2.2 在 `bind 127.0.0.1` 前面添加 `#` 将其注释掉，默认情况下只允许本地连接，注释掉后外网可以连接 Redis
-  echo ${LINUX_PASSWORD} | sudo -S sed -i '/^# bind 127.0.0.1/{s/# //}' /etc/redis.conf
+  echo ${LINUX_PASSWORD} | sudo -S sed -i '/^# bind 127.0.0.1/{s/# //}' /etc/redis/redis.conf
 
   # 2.3 修改 requirepass 配置，设置 Redis 密码
-  echo ${LINUX_PASSWORD} | sudo -S sed -i 's/^# requirepass.*$/requirepass '"${REDIS_PASSWORD}"'/' /etc/redis.conf
+  echo ${LINUX_PASSWORD} | sudo -S sed -i 's/^# requirepass.*$/requirepass '"${REDIS_PASSWORD}"'/' /etc/redis/redis.conf
 
   # 2.4 因为我们上面配置了密码登录，需要将 protected-mode 设置为 no，关闭保护模式
-  echo ${LINUX_PASSWORD} | sudo -S sed -i '/^protected-mode/{s/yes/no/}' /etc/redis.conf
+  echo ${LINUX_PASSWORD} | sudo -S sed -i '/^protected-mode/{s/yes/no/}' /etc/redis/redis.conf
 
   # 3. 为了能够远程连上 Redis，需要执行以下命令关闭防火墙，并禁止防火墙开机启动（如果不需要远程连接，可忽略此步骤）
-  iam::common::sudo "systemctl stop firewalld.service"
-  iam::common::sudo "systemctl disable firewalld.service"
+  iam::common::sudo "sudo ufw disable"
+  iam::common::sudo "sudo ufw status"
 
   # 4. 启动 Redis
-  iam::common::sudo "redis-server /etc/redis.conf"
+  iam::common::sudo "redis-server /etc/redis/redis.conf"
 
   iam::redis::status || return 1
   iam::redis::info
@@ -51,8 +51,8 @@ function iam::redis::install()
 function iam::redis::uninstall()
 {
   set +o errexit
-  iam::common::sudo "killall redis-server"
-  iam::common::sudo "yum -y remove redis"
+  iam::common::sudo "/etc/init.d/redis-server stop"
+  iam::common::sudo "apt-get -y remove redis-server"
   iam::common::sudo "rm -rf /var/lib/redis"
   set -o errexit
   iam::log::info "uninstall Redis successfully"
@@ -71,6 +71,8 @@ function iam::redis::status()
     iam::log::error "can not login with ${REDIS_USERNAME}, redis maybe not initialized properly"
     return 1
   }
+
+  iam::log::info "redis-server status active"
 }
 
 #eval $*
