@@ -9,3 +9,7 @@ import "fmt"
 func main() {
 	fmt.Println("helloworld")
 }
+
+func do() {
+	fmt.Println("helloworld")
+}
