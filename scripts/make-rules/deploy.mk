@@ -10,7 +10,7 @@ KUBECTL := kubectl
 NAMESPACE ?= iam
 CONTEXT ?= yandongxiao.dev
 
-DEPLOYS=iam-apiserver iam-authz-server iam-pump iam-watcher
+DEPLOYS=app
 
 .PHONY: deploy.run.all
 deploy.run.all:

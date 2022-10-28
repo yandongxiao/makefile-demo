@@ -7,7 +7,7 @@ package main
 import "fmt"
 
 func main() {
-       do()
+	do()
 }
 
 func do() {

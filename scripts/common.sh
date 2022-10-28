@@ -80,10 +80,7 @@ iam::build::get_docker_wrapped_binaries() {
   ### If you change any of these lists, please also update DOCKERIZED_BINARIES
   ### in build/BUILD. And iam::golang::server_image_targets
   local targets=(
-    "iam-apiserver,${IAM_BASE_IMAGE_REGISTRY}/debian-base-${arch}:${debian_base_version}"
-    "iam-controller-manager,${IAM_BASE_IMAGE_REGISTRY}/debian-base-${arch}:${debian_base_version}"
-    "iam-scheduler,${IAM_BASE_IMAGE_REGISTRY}/debian-base-${arch}:${debian_base_version}"
-    "iam-proxy,${IAM_BASE_IMAGE_REGISTRY}/debian-iptables-${arch}:${debian_iptables_version}"
+    "app,${IAM_BASE_IMAGE_REGISTRY}/debian-base-${arch}:${debian_base_version}"
   )
 
   echo "${targets[@]}"
@@ -493,5 +490,5 @@ function iam::build::ensure_data_container() {
 # Build all iam commands.
 function iam::build::build_command() {
   iam::log::status "Running build command..."
-  make -C "${IAM_ROOT}" build.multiarch BINS="iamctl iam-apiserver iam-authz-server iam-pump iam-watcher"
+  make -C "${IAM_ROOT}" build BINS="app"
 }

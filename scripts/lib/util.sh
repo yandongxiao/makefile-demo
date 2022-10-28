@@ -222,18 +222,8 @@ iam::util::gen-docs() {
   "${gendocs}" "${dest}/docs/guide/en-US/cmd/iamctl/"
 
   mkdir -p "${dest}/docs/guide/en-US/cmd/"
-  "${geniamdocs}" "${dest}/docs/guide/en-US/cmd/" "iam-apiserver"
-  "${geniamdocs}" "${dest}/docs/guide/en-US/cmd/" "iam-authz-server"
-  "${geniamdocs}" "${dest}/docs/guide/en-US/cmd/" "iam-pump"
-  "${geniamdocs}" "${dest}/docs/guide/en-US/cmd/" "iam-watcher"
-  "${geniamdocs}" "${dest}/docs/guide/en-US/cmd/iamctl" "iamctl"
 
   mkdir -p "${dest}/docs/man/man1/"
-  "${genman}" "${dest}/docs/man/man1/" "iam-apiserver"
-  "${genman}" "${dest}/docs/man/man1/" "iam-authz-server"
-  "${genman}" "${dest}/docs/man/man1/" "iam-pump"
-  "${genman}" "${dest}/docs/man/man1/" "iam-watcher"
-  "${genman}" "${dest}/docs/man/man1/" "iamctl"
 
   mkdir -p "${dest}/docs/guide/en-US/yaml/iamctl/"
   "${genyaml}" "${dest}/docs/guide/en-US/yaml/iamctl/"
