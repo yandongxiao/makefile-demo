@@ -28,7 +28,7 @@ readonly RELEASE_IMAGES="${LOCAL_OUTPUT_ROOT}/release-images"
 readonly IAM_GITHUB_ORG=marmotedu
 readonly IAM_GITHUB_REPO=iam
 
-readonly ARTIFACT=iam.tar.gz
+readonly ARTIFACT=app.tar.gz
 readonly CHECKSUM=${ARTIFACT}.sha1sum
 
 IAM_BUILD_CONFORMANCE=${IAM_BUILD_CONFORMANCE:-y}
@@ -106,8 +106,8 @@ function iam::release::updload_tarballs() {
   for file in $(ls ${RELEASE_TARS}/*)
   do
     if [ "${COSTOOL}" == "coscli" ];then
-      coscli cp "${file}" "cos://${BUCKET}/${COS_RELEASE_DIR}/${IAM_GIT_VERSION}/"
-      coscli cp "${file}" "cos://${BUCKET}/${COS_RELEASE_DIR}/latest/"
+      coscli cp "${file}" "cos://${BUCKET}/${COS_RELEASE_DIR}/${IAM_GIT_VERSION}/${file##*/}"
+      coscli cp "${file}" "cos://${BUCKET}/${COS_RELEASE_DIR}/latest/${file##*/}"
     else
       coscmd upload  "${file}" "${COS_RELEASE_DIR}/${IAM_GIT_VERSION}/"
       coscmd upload  "${file}" "${COS_RELEASE_DIR}/latest/"
@@ -117,7 +117,7 @@ function iam::release::updload_tarballs() {
 
 # Package the source code we built, for compliance/licensing/audit/yadda.
 function iam::release::package_src_tarball() {
-  local -r src_tarball="${RELEASE_TARS}/iam-src.tar.gz"
+  local -r src_tarball="${RELEASE_TARS}/app-src.tar.gz"
   iam::log::status "Building tarball: src"
   if [[ "${IAM_GIT_TREE_STATE-}" = 'clean' ]]; then
     git archive -o "${src_tarball}" HEAD
@@ -171,7 +171,7 @@ function iam::release::package_server_tarballs() {
 
       iam::release::clean_cruft
 
-      local package_name="${RELEASE_TARS}/iam-server-${platform_tag}.tar.gz"
+      local package_name="${RELEASE_TARS}/app-server-${platform_tag}.tar.gz"
       iam::release::create_tarball "${package_name}" "${release_stage}/.."
       ) &
     done
@@ -211,7 +211,7 @@ function iam::release::package_client_tarballs() {
 
       iam::release::clean_cruft
 
-      local package_name="${RELEASE_TARS}/iam-client-${platform_tag}.tar.gz"
+      local package_name="${RELEASE_TARS}/app-client-${platform_tag}.tar.gz"
       iam::release::create_tarball "${package_name}" "${release_stage}/.."
     ) &
   done
@@ -373,7 +373,7 @@ EOF
 
 }
 
-# This will pack iam-system manifests files for distros such as COS.
+# This will pack app-system manifests files for distros such as COS.
 function iam::release::package_iam_manifests_tarball() {
   iam::log::status "Building tarball: manifests"
 
@@ -385,21 +385,21 @@ function iam::release::package_iam_manifests_tarball() {
   local dst_dir="${release_stage}"
   mkdir -p "${dst_dir}"
   cp -r ${src_dir}/* "${dst_dir}"
-  #cp "${src_dir}/iam-apiserver.yaml" "${dst_dir}"
-  #cp "${src_dir}/iam-authz-server.yaml" "${dst_dir}"
-  #cp "${src_dir}/iam-pump.yaml" "${dst_dir}"
-  #cp "${src_dir}/iam-watcher.yaml" "${dst_dir}"
+  #cp "${src_dir}/app-apiserver.yaml" "${dst_dir}"
+  #cp "${src_dir}/app-authz-server.yaml" "${dst_dir}"
+  #cp "${src_dir}/app-pump.yaml" "${dst_dir}"
+  #cp "${src_dir}/app-watcher.yaml" "${dst_dir}"
   #cp "${IAM_ROOT}/cluster/gce/gci/health-monitor.sh" "${dst_dir}/health-monitor.sh"
 
   iam::release::clean_cruft
 
-  local package_name="${RELEASE_TARS}/iam-manifests.tar.gz"
+  local package_name="${RELEASE_TARS}/app-manifests.tar.gz"
   iam::release::create_tarball "${package_name}" "${release_stage}/.."
 }
 
 # This is all the platform-independent stuff you need to run/install iam.
 # Arch-specific binaries will need to be downloaded separately (possibly by
-# using the bundled cluster/get-iam-binaries.sh script).
+# using the bundled cluster/get-app-binaries.sh script).
 # Included in this tarball:
 #   - Cluster spin up/down scripts and configs for various cloud providers
 #   - Tarballs for manifest configs that are ready to be uploaded
@@ -418,13 +418,13 @@ function iam::release::package_final_tarball() {
   cat <<EOF > "${release_stage}/client/README"
 Client binaries are no longer included in the IAM final tarball.
 
-Run release/get-iam-binaries.sh to download client and server binaries.
+Run release/get-app-binaries.sh to download client and server binaries.
 EOF
 
   # We want everything in /scripts.
   mkdir -p "${release_stage}/release"
   cp -R "${IAM_ROOT}/scripts/release" "${release_stage}/"
-  cat <<EOF > "${release_stage}/release/get-iam-binaries.sh"
+  cat <<EOF > "${release_stage}/release/get-app-binaries.sh"
 #!/usr/bin/env bash
 
 # Copyright 2020 Lingfei Kong <colin404@foxmail.com>. All rights reserved.
@@ -433,16 +433,16 @@ EOF
 
 # This file download iam client and server binaries from tencent cos bucket.
 
-os=linux arch=amd64 version=${IAM_GIT_VERSION} && wget https://${BUCKET}.cos.${REGION}.myqcloud.com/${COS_RELEASE_DIR}/\$version/{iam-client-\$os-\$arch.tar.gz,iam-server-\$os-\$arch.tar.gz}
+os=linux arch=amd64 version=${IAM_GIT_VERSION} && wget https://${BUCKET}.cos.${REGION}.myqcloud.com/${COS_RELEASE_DIR}/\$version/{app-client-\$os-\$arch.tar.gz,app-server-\$os-\$arch.tar.gz}
 EOF
-  chmod +x ${release_stage}/release/get-iam-binaries.sh
+  chmod +x ${release_stage}/release/get-app-binaries.sh
 
   mkdir -p "${release_stage}/server"
-  cp "${RELEASE_TARS}/iam-manifests.tar.gz" "${release_stage}/server/"
+  cp "${RELEASE_TARS}/app-manifests.tar.gz" "${release_stage}/server/"
   cat <<EOF > "${release_stage}/server/README"
 Server binary tarballs are no longer included in the IAM final tarball.
 
-Run release/get-iam-binaries.sh to download client and server binaries.
+Run release/get-app-binaries.sh to download client and server binaries.
 EOF
 
   # Include hack/lib as a dependency for the cluster/ scripts
@@ -575,13 +575,13 @@ function iam::release::github_release() {
     --name ${ARTIFACT} \
     --file ${RELEASE_TARS}/${ARTIFACT}
 
-  iam::log::info "upload iam-src.tar.gz to release ${IAM_GIT_VERSION}"
+  iam::log::info "upload app-src.tar.gz to release ${IAM_GIT_VERSION}"
   github-release upload \
     --user ${IAM_GITHUB_ORG} \
     --repo ${IAM_GITHUB_REPO} \
     --tag ${IAM_GIT_VERSION} \
-    --name "iam-src.tar.gz" \
-    --file ${RELEASE_TARS}/iam-src.tar.gz
+    --name "app-src.tar.gz" \
+    --file ${RELEASE_TARS}/app-src.tar.gz
 }
 
 function iam::release::generate_changelog() {
